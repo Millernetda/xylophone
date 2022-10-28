@@ -9,6 +9,44 @@ class XylophonePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return MaterialApp(
+      home: Scaffold(
+        backgroundColor: Colors.black,
+        body: Xylophone(),
+      ),
+    );
   }
 }
+
+class Xylophone extends StatelessWidget {
+  // const Xylophone({Key? key}) : super(key: key);
+
+  Expanded getSoundButton(Color color) {
+    return Expanded(
+      child: TextButton(
+        onPressed: (){},
+        child: Container(
+          color: color,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Column(
+        children: [
+          getSoundButton(Colors.red),
+          getSoundButton(Colors.orange),
+          getSoundButton(Colors.yellow),
+          getSoundButton(Colors.green),
+          getSoundButton(Colors.lightBlueAccent),
+          getSoundButton(Colors.blue),
+          getSoundButton(Colors.purple),
+        ],
+      ),
+    );
+  }
+}
+
