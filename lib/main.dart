@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 void main() {
   runApp(const XylophonePage());
@@ -21,10 +22,18 @@ class XylophonePage extends StatelessWidget {
 class Xylophone extends StatelessWidget {
   // const Xylophone({Key? key}) : super(key: key);
 
-  Expanded getSoundButton(Color color) {
+  //method to invoke the press sound
+  void playSound(int soundNumber) {
+    final player = AudioCache();
+    player.play('note$soundNumber.wav');
+  }
+
+  Expanded getSoundButton(Color color, int soundNumber) {
     return Expanded(
       child: TextButton(
-        onPressed: (){},
+        onPressed: (){
+          playSound(soundNumber);
+        },
         child: Container(
           color: color,
         ),
@@ -37,13 +46,13 @@ class Xylophone extends StatelessWidget {
     return SafeArea(
       child: Column(
         children: [
-          getSoundButton(Colors.red),
-          getSoundButton(Colors.orange),
-          getSoundButton(Colors.yellow),
-          getSoundButton(Colors.green),
-          getSoundButton(Colors.lightBlueAccent),
-          getSoundButton(Colors.blue),
-          getSoundButton(Colors.purple),
+          getSoundButton(Colors.red, 1),
+          getSoundButton(Colors.orange, 2),
+          getSoundButton(Colors.yellow, 3),
+          getSoundButton(Colors.green, 4),
+          getSoundButton(Colors.lightBlueAccent, 5),
+          getSoundButton(Colors.blue, 6),
+          getSoundButton(Colors.purple, 7),
         ],
       ),
     );
