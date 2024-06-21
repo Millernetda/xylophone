@@ -1,5 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+
+import 'button_ui.dart';
 
 void main() {
   runApp(const XylophonePage());
@@ -19,23 +23,43 @@ class XylophonePage extends StatelessWidget {
   }
 }
 
-class Xylophone extends StatelessWidget {
-  // const Xylophone({Key? key}) : super(key: key);
+class Xylophone extends StatefulWidget {
+  Xylophone({super.key});
 
-  //method to invoke the press sound
-  void playSound(int soundNumber) {
-    final player = AudioCache();
-    player.play('note$soundNumber.wav');
+  @override
+  State<Xylophone> createState() => _XylophoneState();
+}
+
+class _XylophoneState extends State<Xylophone> {
+  final List<ButtonUi> _buttons = [
+    ButtonUi("note1.wav", Colors.black),
+    ButtonUi("note2.wav", Colors.green),
+    ButtonUi("note3.wav", Colors.red),
+    ButtonUi("note4.wav", Colors.blue),
+  ];
+
+  final _player = AudioCache();
+
+  void _playSound(String audioPath) {
+    _player.loop(audioPath);
   }
 
-  Expanded getSoundButton(Color color, int soundNumber) {
+  Expanded getSoundButton(ButtonUi button, int index) {
     return Expanded(
       child: TextButton(
-        onPressed: (){
-          playSound(soundNumber);
+        onLongPress: () {
+          setState(() {
+            _buttons[index].isSelected = true;
+          });
+        },
+        onPressed: () {
+          _playSound(button.audioPath);
         },
         child: Container(
-          color: color,
+          margin: _buttons[index].isSelected ? EdgeInsets.all(12) : null,
+          decoration: BoxDecoration(
+            color: button.color,
+          ),
         ),
       ),
     );
@@ -43,19 +67,64 @@ class Xylophone extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
+    return Scaffold(
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          getSoundButton(Colors.red, 1),
-          getSoundButton(Colors.orange, 2),
-          getSoundButton(Colors.yellow, 3),
-          getSoundButton(Colors.green, 4),
-          getSoundButton(Colors.lightBlueAccent, 5),
-          getSoundButton(Colors.blue, 6),
-          getSoundButton(Colors.purple, 7),
+          FloatingActionButton(
+            onPressed: () {
+              _reGenerateColor();
+            },
+            child: const Icon(Icons.restart_alt),
+          ),
+          const SizedBox(height: 8),
+          FloatingActionButton(
+            onPressed: () {
+              _addNewSound();
+            },
+            child: const Icon(Icons.add),
+          ),
+          const SizedBox(height: 8),
+          FloatingActionButton(
+            onPressed: () {
+              _removeSound();
+            },
+            child: const Icon(Icons.remove),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          for (int i = 0; i < _buttons.length; i++)
+            getSoundButton(_buttons[i], i),
         ],
       ),
     );
   }
-}
 
+  void _reGenerateColor() {
+    final index = Random().nextInt(_buttons.length);
+    final r = Random().nextInt(255);
+    final g = Random().nextInt(255);
+    final b = Random().nextInt(255);
+    _buttons[index].color = Color.fromRGBO(r, g, b, 1);
+    setState(() {});
+  }
+
+  void _addNewSound() {
+    _buttons.add(ButtonUi(
+      "note${_buttons.length + 1}.wav",
+      Colors.black,
+      isSelected: false,
+    ));
+    setState(() {});
+  }
+
+  void _removeSound() {
+    if (_buttons.isNotEmpty) {
+      setState(() {
+        _buttons.removeWhere((element) => element.isSelected);
+      });
+    }
+  }
+}
